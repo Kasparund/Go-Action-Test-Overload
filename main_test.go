@@ -53517,7 +53517,7 @@ func Test_simpleFunction(t *testing.T) {
 			args: args{
 				x: 1,
 			},
-			want: 1,
+			want: 2,
 		},
 	}
 	for _, tt := range tests {
