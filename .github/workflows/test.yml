@@ -15,7 +15,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Run Tests
-      run: go test -json ./... > test.json
+      run: go test -v -json ./... | tee test.json
     - name: Annotate tests
       if: always()
       uses: guyarb/golang-test-annotations@v0.5.0
