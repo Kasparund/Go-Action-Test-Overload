@@ -66,42 +66,47 @@ func Test_service_StartProcess(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctrl := gomock.NewController(t)
 
-			f := fields{
-				httpClient: mockInterface.NewMockHttpClient(ctrl),
-			}
+	round := 0
+	for round < 1000 {
+		round++
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
 
-			service := NewService(f.httpClient)
-			requestBody := []byte(`{"key":"value"}`)
-			responseBody := ioutil.NopCloser(strings.NewReader(tt.args.responseBody))
-			httpResponse := http.Response{
-				StatusCode: tt.args.statusCode,
-				Body:       responseBody,
-			}
-			if tt.args.hasReadError {
-				httpResponse.Body = ErrorBuffer{}
-			}
-			url := "https://test.url.com"
+				f := fields{
+					httpClient: mockInterface.NewMockHttpClient(ctrl),
+				}
 
-			gomock.InOrder(
-				f.httpClient.
-					EXPECT().
-					Post(url, "application/json", requestBody).
-					Return(&httpResponse, tt.args.httpError).
-					MaxTimes(1),
-			)
+				service := NewService(f.httpClient)
+				requestBody := []byte(`{"key":"value"}`)
+				responseBody := ioutil.NopCloser(strings.NewReader(tt.args.responseBody))
+				httpResponse := http.Response{
+					StatusCode: tt.args.statusCode,
+					Body:       responseBody,
+				}
+				if tt.args.hasReadError {
+					httpResponse.Body = ErrorBuffer{}
+				}
+				url := "https://test.url.com"
 
-			response, err := service.StartProcess()
+				gomock.InOrder(
+					f.httpClient.
+						EXPECT().
+						Post(url, "application/json", requestBody).
+						Return(&httpResponse, tt.args.httpError).
+						MaxTimes(1),
+				)
 
-			if tt.wantErr == false && !reflect.DeepEqual(tt.args.expectedString, response) {
-				t.Errorf("expected %v, actual %v", tt.args.expectedString, response)
-			}
+				response, err := service.StartProcess()
 
-			assert.Equal(t, tt.wantErr, (err != nil))
-		})
+				if tt.wantErr == false && !reflect.DeepEqual(tt.args.expectedString, response) {
+					t.Errorf("expected %v, actual %v", tt.args.expectedString, response)
+				}
+
+				assert.Equal(t, tt.wantErr, (err != nil))
+			})
+		}
 	}
 }
 
