@@ -41,7 +41,12 @@ func NewService(httpClient httpclient.HttpClient, config util.InfrastructureConf
 }
 
 func (of *service) StartProcess() (response string, err error) {
-	var requestBody = []byte(`{"key":"value"}`)
+	request := Request{Key: "value"}
+	requestBody, err := of.jsonHandler.Marshal(request)
+	if err != nil {
+		return
+	}
+
 	resp, err := of.httpClient.Post("https://test.url.com", "application/json", requestBody)
 	if err != nil {
 		return
@@ -59,4 +64,8 @@ func (of *service) StartProcess() (response string, err error) {
 	}
 
 	return string(body), nil
+}
+
+type Request struct {
+	Key string `json:"key"`
 }
