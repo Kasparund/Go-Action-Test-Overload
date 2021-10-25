@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Kasparund/Go-Action-Test-Overload/errorHelper"
+	"github.com/Kasparund/Go-Action-Test-Overload/errorHelper/errorUtil"
 	mockInterface "github.com/Kasparund/Go-Action-Test-Overload/httpClient/mocks"
 	jsonHandlerMock "github.com/Kasparund/Go-Action-Test-Overload/jsonHandler/mocks"
 	"github.com/Kasparund/Go-Action-Test-Overload/util"
@@ -21,6 +23,7 @@ var numberOfSubtests = 10
 
 type fields struct {
 	httpClient  *mockInterface.MockHttpClient
+	errorUtil   errorHelper.Helper
 	config      util.InfrastructureConfig
 	jsonHandler *jsonHandlerMock.MockJSONHandler
 }
@@ -31,11 +34,12 @@ func setupSubtest(t *testing.T) (fields, Service) {
 	infrastructureConfig, _ := util.LoadInfrastructureConfig()
 	f := fields{
 		httpClient:  mockInterface.NewMockHttpClient(ctrl),
+		errorUtil:   errorUtil.NewErrorUtil(),
 		config:      infrastructureConfig,
 		jsonHandler: jsonHandlerMock.NewMockJSONHandler(ctrl),
 	}
 
-	service := NewService(f.httpClient, f.config, f.jsonHandler)
+	service := NewService(f.httpClient, f.errorUtil, f.config, f.jsonHandler)
 	return f, service
 }
 
