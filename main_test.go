@@ -19,7 +19,7 @@ import (
 	"gotest.tools/assert"
 )
 
-var numberOfSubtests = 10
+var numberOfSubtests = 100
 
 type fields struct {
 	httpClient  *mockInterface.MockHttpClient
